@@ -4,13 +4,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+
+from cms.views import SiteContentViewSet
+from blog.views import BlogPostViewSet
+from leads.views import LeadViewSet
+from contact.views import ContactViewSet
+
+router = DefaultRouter()
+router.register(r"sitecontent", SiteContentViewSet, basename="sitecontent")
+router.register(r"blogs", BlogPostViewSet, basename="blog")
+router.register(r"leads", LeadViewSet, basename="lead")
+router.register(r"contact", ContactViewSet, basename="contact")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # This line includes all the URLs defined in cms/urls.py under the 'api/' prefix
-    path('api/', include('cms.urls')),
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
 ]
 
-# This is good practice for serving user-uploaded media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,11 +1,22 @@
 from pathlib import Path
 import os
+from decouple import config # <-- NEW: Import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-1234567890-your-secret-key"
+# -----------------------------
+# CORE SETTINGS
+# -----------------------------
+# Load SECRET_KEY from .env file, with a secure fallback
+SECRET_KEY = config(
+    "DJANGO_SECRET_KEY", 
+    default="django-insecure-1234567890-your-secret-key"
+)
 
-DEBUG = True
+# Load DEBUG from .env file. config() defaults to treating values as strings.
+# The 'cast' argument converts the string 'True' or 'False' to a boolean.
+# Defaults to False for safety in case the variable is missing.
+DEBUG = config("DEBUG", default=False, cast=bool) 
 
 ALLOWED_HOSTS = ["*"]  # allow all for development
 
@@ -37,9 +48,8 @@ INSTALLED_APPS = [
 # -----------------------------
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # must be at the top
-    'django.middleware.common.CommonMiddleware',
-
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -105,7 +115,7 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # -----------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_URL = "/media/"

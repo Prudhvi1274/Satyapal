@@ -3,7 +3,12 @@ from .models import BlogPost
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("title",)}
-    list_display = ("title", "published", "created_at")
-    list_filter = ("published",)
-    search_fields = ("title", "short_description")
+    """
+    Admin configuration for the BlogPost model.
+    """
+    list_display = ('title', 'slug', 'published', 'created_at')
+    list_filter = ('published', 'created_at')
+    search_fields = ('title', 'body')
+    prepopulated_fields = {'slug': ('title',)}
+    date_hierarchy = 'created_at'
+    ordering = ('published', 'created_at')
